@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  ADMIN
+  FAMILY
+}
+
+model User {
+  id                  String     @id @default(cuid())
+  email               String     @unique @db.VarChar(254)
+  name                String     @db.VarChar(100)
+  passwordHash        String
+  role                UserRole
+  isActive            Boolean    @default(true)
+  failedLoginAttempts Int        @default(0)
+  lockedUntil         DateTime?
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+  auditLogs           AuditLog[]
+
+  @@index([role, isActive])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?
+  action     String   @db.VarChar(80)
+  entityType String   @db.VarChar(80)
+  entityId   String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+  actor      User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@index([actorId, createdAt])
+}
