@@ -3,8 +3,9 @@ import {
   CirclePlus, CreditCard, HeartPulse, Wallet,
 } from "lucide-react";
 import { formatCurrency } from "@/lib/format";
+import { expenseCategories } from "@/components/dashboard/overview-data";
 import {
-  CashFlowChart, CategoryChart, expenseCategories, MovementChart,
+  CashFlowChart, CategoryChart, MovementChart,
 } from "@/components/dashboard/overview-charts";
 
 const metrics = [

@@ -5,6 +5,7 @@ import {
   ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
 import { formatCurrency } from "@/lib/format";
+import { expenseCategories } from "@/components/dashboard/overview-data";
 
 const balanceData = [
   { day: "20 set", balance: 3420 }, { day: "24 set", balance: 3310 },
@@ -20,13 +21,6 @@ const movementData = [
   { day: "Sex", income: 610, expense: 720 },
   { day: "Sáb", income: 880, expense: 560 },
   { day: "Dom", income: 1020, expense: 690 },
-];
-const categoryData = [
-  { category: "Alimentação", value: 31, color: "#ededed" },
-  { category: "Saúde", value: 24, color: "#c2c2c4" },
-  { category: "Veículo", value: 19, color: "#929296" },
-  { category: "Transporte", value: 14, color: "#626267" },
-  { category: "Outros", value: 12, color: "#3d3d41" },
 ];
 const tooltipStyle = {
   backgroundColor: "#1c1c1e", border: "1px solid #39393c",
@@ -90,9 +84,9 @@ export function CategoryChart() {
     <div className="category-chart" role="img" aria-label="Distribuição demonstrativa das despesas por categoria">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
-          <Pie data={categoryData} dataKey="value" nameKey="category"
+          <Pie data={expenseCategories} dataKey="value" nameKey="category"
             innerRadius="56%" outerRadius="82%" paddingAngle={2} stroke="none">
-            {categoryData.map((entry) => <Cell key={entry.category} fill={entry.color} />)}
+            {expenseCategories.map((entry) => <Cell key={entry.category} fill={entry.color} />)}
           </Pie>
           <Tooltip contentStyle={tooltipStyle}
             formatter={(value) => [`${Number(value)}%`, "Distribuição"]} />
@@ -102,4 +96,3 @@ export function CategoryChart() {
   );
 }
 
-export const expenseCategories = categoryData;
