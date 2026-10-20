@@ -15,7 +15,7 @@ if [ -n "${COMPOSE_DATABASE_URL:-}" ]; then
         } catch {
           decoded = value;
         }
-        return encodeURIComponent(decoded).replace(/[!'()*]/g, (character) =>
+        return encodeURIComponent(decoded).replace(/[!\x27()*]/g, (character) =>
           `%${character.charCodeAt(0).toString(16).toUpperCase()}`,
         );
       };
