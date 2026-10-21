@@ -11,10 +11,13 @@ Sistema privado de organização financeira familiar, com dashboard responsivo e
 - Senhas armazenadas com hash bcrypt; cinco tentativas incorretas bloqueiam a conta por 15 minutos.
 - Sessões Auth.js com duração de até oito horas.
 - PostgreSQL, Prisma ORM, migração inicial e criação controlada das duas contas.
+- Fundação do domínio financeiro com contas, categorias, lançamentos, transferências, saldos `Decimal(14,2)` e auditoria transacional.
 - Dashboard escuro inspirado na referência visual, com gráficos demonstrativos.
 - Dockerfile multi-stage, healthcheck e volume persistente no Compose local.
 
-Lançamentos, contas recorrentes, dívidas, conciliação de saldo e relatórios serão adicionados em etapas posteriores. O modelo de auditoria está preparado, mas ainda não há operações financeiras para registrar no histórico.
+O dashboard continua demonstrativo nesta etapa; os serviços financeiros estão preparados para a próxima etapa de interface e não inserem valores fictícios. Contas recorrentes, dívidas, conciliação histórica e relatórios serão adicionados posteriormente.
+
+As fórmulas de saldo, a política de correção do usuário `FAMILY`, o tratamento da data de referência e o procedimento de migração estão documentados em [`docs/financial-domain.md`](docs/financial-domain.md).
 
 ## Desenvolvimento local
 
@@ -61,7 +64,9 @@ Não publique senhas, `AUTH_SECRET`, URLs privadas com senha, saldos ou dados pe
 
 - `src/app`: rotas do App Router, login, painel e healthcheck.
 - `src/lib/auth`: validação de credenciais e autorização no servidor.
-- `prisma`: modelo inicial, migrações e seed.
+- `src/lib/finance`: validação monetária, autorização, auditoria e serviços do domínio financeiro.
+- `prisma`: modelos, migrações e seed sem dados financeiros fictícios.
+- `tests`: regras monetárias, autorização e persistência PostgreSQL.
 - `src/components/dashboard`: dashboard e gráficos de demonstração.
 - `scripts/start.sh`: migrações e seed antes de iniciar o container.
 
@@ -70,6 +75,7 @@ Não publique senhas, `AUTH_SECRET`, URLs privadas com senha, saldos ou dados pe
 ```sh
 npm run lint
 npm run typecheck
+npm test
 npm run build
 ```
 

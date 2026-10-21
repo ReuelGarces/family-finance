@@ -12,18 +12,51 @@ enum UserRole {
   FAMILY
 }
 
+enum FinancialAccountType {
+  BANK
+  CASH
+  DIGITAL_WALLET
+  CREDIT_CARD
+  OTHER
+}
+
+enum FinancialAccountStatus {
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+}
+
+enum OperationType {
+  INCOME
+  EXPENSE
+}
+
+enum CategoryStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum EntryStatus {
+  POSTED
+  CANCELED
+}
+
 model User {
-  id                  String     @id @default(cuid())
-  email               String     @unique @db.VarChar(254)
-  name                String     @db.VarChar(100)
-  passwordHash        String
-  role                UserRole
-  isActive            Boolean    @default(true)
-  failedLoginAttempts Int        @default(0)
-  lockedUntil         DateTime?
-  createdAt           DateTime   @default(now())
-  updatedAt           DateTime   @updatedAt
-  auditLogs           AuditLog[]
+  id                   String        @id @default(cuid())
+  email                String        @unique @db.VarChar(254)
+  name                 String        @db.VarChar(100)
+  passwordHash         String
+  role                 UserRole
+  isActive             Boolean       @default(true)
+  failedLoginAttempts  Int           @default(0)
+  lockedUntil          DateTime?
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+  auditLogs            AuditLog[]
+  transactionsAuthored Transaction[] @relation("TransactionAuthor")
+  transactionsCanceled Transaction[] @relation("TransactionCanceledBy")
+  transfersAuthored    Transfer[]    @relation("TransferAuthor")
+  transfersCanceled    Transfer[]    @relation("TransferCanceledBy")
 
   @@index([role, isActive])
 }
@@ -40,4 +73,83 @@ model AuditLog {
 
   @@index([createdAt])
   @@index([actorId, createdAt])
+}
+
+model FinancialAccount {
+  id                String                 @id @default(cuid())
+  name              String                 @unique @db.VarChar(120)
+  type              FinancialAccountType
+  initialBalance    Decimal                @db.Decimal(14, 2)
+  referenceDate     DateTime               @db.Date
+  status            FinancialAccountStatus @default(ACTIVE)
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+  transactions      Transaction[]
+  outgoingTransfers Transfer[]             @relation("TransferOrigin")
+  incomingTransfers Transfer[]             @relation("TransferDestination")
+
+  @@index([status, referenceDate])
+}
+
+model Category {
+  id           String         @id @default(cuid())
+  name         String         @db.VarChar(80)
+  type         OperationType
+  status       CategoryStatus @default(ACTIVE)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  transactions Transaction[]
+
+  @@unique([name, type])
+  @@index([type, status])
+}
+
+model Transaction {
+  id                 String           @id @default(cuid())
+  type               OperationType
+  amount             Decimal          @db.Decimal(14, 2)
+  description        String           @db.VarChar(240)
+  accountId          String
+  categoryId         String
+  occurredOn         DateTime         @db.Date
+  authorId           String
+  status             EntryStatus      @default(POSTED)
+  canceledAt         DateTime?
+  canceledById       String?
+  cancellationReason String?          @db.VarChar(240)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  account            FinancialAccount @relation(fields: [accountId], references: [id], onDelete: Restrict)
+  category           Category         @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  author             User             @relation("TransactionAuthor", fields: [authorId], references: [id], onDelete: Restrict)
+  canceledBy         User?            @relation("TransactionCanceledBy", fields: [canceledById], references: [id], onDelete: SetNull)
+
+  @@index([accountId, occurredOn, status])
+  @@index([categoryId, occurredOn, status])
+  @@index([authorId, createdAt])
+  @@index([status, occurredOn])
+}
+
+model Transfer {
+  id                   String           @id @default(cuid())
+  originAccountId      String
+  destinationAccountId String
+  amount               Decimal          @db.Decimal(14, 2)
+  transferredOn        DateTime         @db.Date
+  authorId             String
+  status               EntryStatus      @default(POSTED)
+  canceledAt           DateTime?
+  canceledById         String?
+  cancellationReason   String?          @db.VarChar(240)
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  originAccount        FinancialAccount @relation("TransferOrigin", fields: [originAccountId], references: [id], onDelete: Restrict)
+  destinationAccount   FinancialAccount @relation("TransferDestination", fields: [destinationAccountId], references: [id], onDelete: Restrict)
+  author               User             @relation("TransferAuthor", fields: [authorId], references: [id], onDelete: Restrict)
+  canceledBy           User?            @relation("TransferCanceledBy", fields: [canceledById], references: [id], onDelete: SetNull)
+
+  @@index([originAccountId, transferredOn, status])
+  @@index([destinationAccountId, transferredOn, status])
+  @@index([authorId, createdAt])
+  @@index([status, transferredOn])
 }
