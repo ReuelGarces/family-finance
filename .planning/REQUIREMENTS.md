@@ -75,16 +75,35 @@ Deferred until the basic financial operation has been validated with the family.
 
 ## Traceability
 
-The roadmap will assign each v1 requirement to exactly one phase.
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
+| AUTH-01 | Phase 1 | Pending |
+| AUTH-02 | Phase 1 | Pending |
+| AUTH-03 | Phase 1 | Pending |
+| ACCT-01 | Phase 2 | Pending |
+| ACCT-02 | Phase 2 | Pending |
+| CAT-01 | Phase 2 | Pending |
+| MOVE-01 | Phase 3 | Pending |
+| MOVE-02 | Phase 3 | Pending |
+| MOVE-03 | Phase 3 | Pending |
+| MOVE-04 | Phase 3 | Pending |
+| MOVE-05 | Phase 3 | Pending |
+| HIST-01 | Phase 4 | Pending |
+| HIST-02 | Phase 4 | Pending |
+| DASH-01 | Phase 4 | Pending |
+| DASH-02 | Phase 4 | Pending |
+| DASH-03 | Phase 4 | Pending |
+| RECN-01 | Phase 5 | Pending |
+| RECN-02 | Phase 5 | Pending |
+| RECN-03 | Phase 5 | Pending |
+| UX-01 | Phase 5 | Pending |
+| TEST-01 | Phase 5 | Pending |
 
 **Coverage:**
 - v1 requirements: 21 total
-- Mapped to phases: 0
-- Unmapped: 21
+- Mapped to phases: 21
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-10-23*
-*Last updated: 2026-10-23 after MVP scope approval*
+*Last updated: 2026-10-23 after initial roadmap creation*
