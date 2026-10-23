@@ -37,22 +37,22 @@ created: "2026-10-23"
 
 ## Per-Task Verification Map
 
-Task IDs below are provisional; the planner must align them with the final plan task IDs before planning is sealed.
-
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| 01-01-01 | 01 | 1 | AUTH-01 | T-01-01 | Existing ADMIN and FAMILY credentials still produce a valid server-recognized session; inactive users are rejected. | integration | `npm test` | ❌ W0 | ⬜ pending |
-| 01-01-02 | 01 | 1 | AUTH-02 | T-01-02 | FAMILY cannot manage the catalog or escalate role; permitted operations remain available. | unit | `npm test` | ✅ partial | ⬜ pending |
-| 01-01-03 | 01 | 1 | AUTH-03 | T-01-03 | Reads, writes, references, summaries, transfers, and audit history cannot cross family scope. | unit + PostgreSQL integration | `npm test` with isolated `TEST_DATABASE_URL` | ❌ W0 | ⬜ pending |
+| 01-01-02 | 01 | 0 | AUTH-01 | T-01-01 | Existing ADMIN and FAMILY credential behavior remains intact; inactive and locked users are rejected and failed attempts persist only through the isolated test client. | PostgreSQL integration | `node --import tsx --test tests/auth-skeleton.test.ts` | ❌ planned | ⬜ pending |
+| 01-01-03 | 01 | 0 | AUTH-03 | T-01-01 | Two-family fixture descriptors use distinct identifiers without requiring the not-yet-created Prisma family models. | unit | `node --import tsx --test tests/family-isolation-fixture.test.ts` | ❌ planned | ⬜ pending |
+| 01-02-03 | 02 | 1 | AUTH-03 | T-01-05, T-01-06 | The inaugural-family migration preserves legacy fingerprints and a user from family A cannot read family B's accounts. | PostgreSQL integration | `node --import tsx --test tests/family-isolation.test.ts tests/family-migration.test.ts` | ❌ planned | ⬜ pending |
+| 01-03-03 | 03 | 2 | AUTH-01, AUTH-02, AUTH-03 | T-01-07, T-01-08 | Finance reads remain family-scoped for ADMIN and FAMILY; inactive users and users without membership receive no finance scope. | unit + PostgreSQL integration | `node --import tsx --test tests/finance-authorization.test.ts tests/family-isolation.test.ts` | ❌ planned | ⬜ pending |
+| 01-04-03 | 04 | 3 | AUTH-02, AUTH-03 | T-01-09, T-01-10 | Catalog, movement, transfer, reference, and audit writes reject cross-family access and remain atomic on rollback. | PostgreSQL integration | `node --import tsx --test tests/family-isolation.test.ts tests/finance-postgres.test.ts` | ❌ planned | ⬜ pending |
 
 ---
 
 ## Wave 0 Requirements
 
-- [ ] Add focused tests for the server-derived family scope through production finance-service entry points.
-- [ ] Add two-family fixtures and cross-family read/write/reference/transfer/audit coverage, including `tests/family-isolation.test.ts` or the final plan's equivalent.
-- [ ] Add or extend sign-in/session tests for existing ADMIN and FAMILY users and inactive-user rejection.
-- [ ] Provide an isolated PostgreSQL database through `TEST_DATABASE_URL` before database-backed isolation tests; Docker Compose was unavailable during research.
+- [ ] Confirm the disposable, non-production `TEST_DATABASE_URL` at blocking checkpoint `01-01-01` before any database command.
+- [ ] Add the isolated credentials integration test in `01-01-02` and the pure two-family descriptor plus pre-family migration fixture in `01-01-03`.
+- [ ] Provide an isolated PostgreSQL database through `TEST_DATABASE_URL` before any database-backed phase test; Docker Compose was unavailable during research.
+- [ ] Defer family-owned Prisma fixture writes and cross-family database assertions until the schema and migration are approved in Wave 1.
 
 ---
 
