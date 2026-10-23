@@ -51,6 +51,8 @@ Progress: [░░░░░░░░░░] 0%
 Recent decisions affecting current work:
 
 - [MVP]: Reuse the existing Next.js, Prisma, Auth.js, and finance-service architecture; do not rebuild validated components.
+- [Governance, 2026-10-23]: GSD-Core is the official planning and progress authority. Implementation agents execute approved plans, while architecture and security decisions require technical review.
+- [Git]: Use isolated phase branches and pull requests. The main branch remains the Coolify production deployment source.
 - [Phase 1]: Finance reads and writes must derive their family scope from the authenticated server-side session.
 - [Phase 3]: Transfers remain atomic and outside income and expense totals; corrections preserve the original event.
 - [Phase 5]: Reconciliation records reported and calculated balances as evidence; any corrective event is explicit and linked.
